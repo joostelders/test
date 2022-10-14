@@ -16,7 +16,8 @@
 
 <script>
 import { Editor, EditorContent } from "@tiptap/vue-2";
-import Layout from "../plugins/layout";
+import { LayoutNode } from "../plugins/layout/layoutNode";
+import { LayoutColumnNode } from "../plugins/layout/layoutColumnNode";
 import StarterKit from "@tiptap/starter-kit";
 
 export default {
@@ -35,7 +36,7 @@ export default {
   mounted() {
     this.editor = new Editor({
       content: this.value,
-      extensions: [StarterKit, Layout],
+      extensions: [StarterKit, LayoutColumnNode, LayoutNode],
       onUpdate: () => {
         console.log(this.editor.getHTML());
         this.value = this.editor.getHTML();

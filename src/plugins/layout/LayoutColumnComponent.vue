@@ -1,18 +1,26 @@
 <template>
-  <div data-layout-column data-column-width="50" :style="columnStyle" contenteditable="false">
+  <node-view-wrapper :contenteditable="true" data-layout-column :style="style">
+    <div class="border m-2 p-2">
+      <h2>{{ style }} - {{ getPos() }} - {{ layout }}</h2>
+    </div>
     <div :contenteditable="true">
       <node-view-content class="content" />
     </div>
-  </div>
+  </node-view-wrapper>
 </template>
 
 <script>
-import { NodeViewContent, nodeViewProps } from "@tiptap/vue-2";
+import { NodeViewContent, NodeViewWrapper, nodeViewProps } from "@tiptap/vue-2";
 export default {
-  components: { NodeViewContent },
+  components: { NodeViewContent, NodeViewWrapper },
+  computed: {
+    style() {
+      return { flexBasis: this.node.attrs.width };
+    },
+  },
   props: {
     nodeViewProps,
-    columnStyle: {},
+    layout: {},
   },
 };
 </script>

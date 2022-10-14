@@ -1,13 +1,10 @@
 <template>
-  <node-view-wrapper :contenteditable="true" v-if="node">
-    <div data-layout-section>
-      <!-- <div :contenteditable="true" class="border p-5 m-5 w-full">
-        <node-view-content class="content" />
-      </div> -->
-
-      <layout-column v-if="showFirstColumn" :columnStyle="columnStyle" />
-      <layout-column v-if="showSecondColumn" :columnStyle="columnStyle" />
-      <layout-column v-if="showThirdColumn" :columnStyle="columnStyle" />
+  <node-view-wrapper>
+    <h2>
+      Layout: <strong>{{ node.attrs.layout }}</strong>
+    </h2>
+    <div :contenteditable="true" v-if="node">
+      <node-view-content data-layout-section :layout="node.attrs.layout" />
     </div>
     <div class="flex gap-x-3 my-2">
       <button
@@ -24,20 +21,19 @@
 </template>
 
 <script>
-import { NodeViewWrapper, nodeViewProps } from "@tiptap/vue-2";
-import LayoutColumn from "./LayoutColumn.vue";
+import { NodeViewWrapper, NodeViewContent, nodeViewProps } from "@tiptap/vue-2";
 export default {
-  components: { NodeViewWrapper, LayoutColumn },
+  components: { NodeViewWrapper, NodeViewContent },
   props: {
     nodeViewProps,
-    // node: {
-    //   type: Object,
-    //   required: true,
-    // },
-    // updateAttributes: {
-    //   type: Function,
-    //   required: true,
-    // },
+    node: {
+      type: Object,
+      required: true,
+    },
+    editor: {
+      type: Object,
+      required: true,
+    },
   },
   data() {
     return {
@@ -45,23 +41,8 @@ export default {
     };
   },
   computed: {
-    columnStyle() {
-      return { flexBasis: Math.round(100 / this.numOfColumns) + "%" };
-    },
-    numOfColumns() {
-      return 3;
-    },
     selectedLayout() {
       return this.node.attrs.layout;
-    },
-    showFirstColumn() {
-      return true;
-    },
-    showSecondColumn() {
-      return ["two_columns", "three_columns"].includes(this.selectedLayout);
-    },
-    showThirdColumn() {
-      return ["three_columns"].includes(this.selectedLayout);
     },
   },
   methods: {

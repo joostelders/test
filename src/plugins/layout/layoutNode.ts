@@ -1,34 +1,31 @@
-import { mergeAttributes, Node, nodeInputRule } from "@tiptap/core";
+import { mergeAttributes, Node } from "@tiptap/core";
 import { VueNodeViewRenderer } from "@tiptap/vue-2";
 import LayoutComponent from "./LayoutComponent.vue";
 
 export interface LayoutOptions {
   allowBase64: boolean;
+  layout: string;
   HTMLAttributes: Record<string, any>;
 }
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
     layout: {
-      /**
-       * Add a layout
-       */
       setLayout: (options: { layout: string }) => ReturnType;
-      // unsetImage: () => ReturnType;
     };
   }
 }
 
-export const Layout = Node.create<LayoutOptions>({
-  name: "vueComponent",
+export const LayoutNode = Node.create<LayoutOptions>({
+  name: "layoutNode",
   group: "block",
   marks: "bold",
-  content: "inline*",
+  content: "layoutColumnNode*",
 
   addAttributes() {
     return {
       layout: {
-        default: "two_columns",
+        default: "three_columns",
       },
     };
   },
@@ -36,49 +33,35 @@ export const Layout = Node.create<LayoutOptions>({
   parseHTML() {
     return [
       {
-        tag: "vue-component",
+        tag: "layout-node",
       },
     ];
   },
 
-  onUpdate() {
-    console.log("update");
-  },
-
   renderHTML({ HTMLAttributes }) {
-    console.log("renderHTML");
-    return ["vue-component", mergeAttributes(HTMLAttributes)];
+    return ["layout-node", mergeAttributes(HTMLAttributes), 0];
   },
 
   addNodeView() {
-    console.log("addNodeView");
     return VueNodeViewRenderer(LayoutComponent);
+  },
+
+  getDefaultContent() {
+    return [{ type: "layoutColumnNode" }];
   },
 
   addCommands() {
     return {
       setLayout:
-        (options) =>
+        () =>
         ({ commands }) => {
           return commands.insertContent({
             type: this.name,
-            attrs: options,
+            content: Array(3).fill({
+              type: "layoutColumnNode",
+            }),
           });
         },
     };
   },
-
-  // addInputRules() {
-  //   return [
-  //     nodeInputRule({
-  //       find: inputRegex,
-  //       type: this.type,
-  //       getAttributes: (match) => {
-  //         const [, , layout] = match;
-
-  //         return { layout };
-  //       },
-  //     }),
-  //   ];
-  // },
 });
